@@ -1,45 +1,49 @@
 from requests import ConnectionError, Session
+from requests.exceptions import Timeout
 
 
 class WebSborClient:
     """
     Клиент для получения данных:
         об организации по ИНН, ОКПО или ОГРН
-        об отчетах орагнизации по ID БД
+        об отчетах орагнизации по ID организации в БД
     """
     base_url = 'https://websbor.gks.ru/webstat/api/gs'
     orgs_url = f'{base_url}/organizations'
     indexes_url = f'{base_url}//organizations/{{}}/forms'
+    timeout = 2
 
-    def __init__(self, session, base_url=None):
+    def __init__(self, session=None, base_url=None):
         self.base_url = base_url if base_url else self.base_url
-        self.session = session
+        self.session = session if session else Session()
 
-    def send_request(self, method, url, **kwargs):
-        method = getattr(self.session, method)
+    def send_request(self, method_name, url, **kwargs):
+        method = getattr(self.session, method_name)
+        response = None
         try:
-            response = method(url, **kwargs)
-            status = True
+            response = method(url, timeout=self.timeout, **kwargs)
         except ConnectionError:
-            response = 'Ошибка соединения'
-            status = False
-        return self.parse_response(status, response)
+            print('Ошибка подключения')
+        except Timeout:
+            print('Превышено время ожидания ответа')
+        return self.parse_response(response)
     
-    def parse_response(self, status, response):
-        if status:
+    def parse_response(self, response):
+        is_response_success = False
+        if response is not None:
             if response.status_code == 200:
-                return True, response.json()
+                is_response_success = True 
             try:
-                return False, response.json()
+                response = response.json()
             except ValueError:
-                return False, response.status_code
-        return status, response
+                response = None
+        return is_response_success, response
     
-    def get_org_data(self, okpo='', inn='', ogrn=''):
+    def get_orgs(self, okpo='', inn='', ogrn=''):
         payload = {'okpo': okpo, 'inn': inn, 'ogrn': ogrn}
         return self.send_request('post', self.orgs_url, json=payload)
 
-    def get_org_reports(self, org_id):
+    def get_org_reports(self, org_id=''):
         org_reports_url = self.indexes_url.format(org_id)
         return self.send_request('get', org_reports_url)
 
