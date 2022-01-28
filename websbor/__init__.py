@@ -1,1 +1,1 @@
-from client import WebSborClient
+from websbor.client import WebSborClient
