@@ -99,7 +99,7 @@ class WebSborClient(BaseClient):
         if org_id is None:
             return
 
-        is_success, reports = self.client.get_organisation_reports(org_id)
+        is_success, reports = self.get_organisation_reports(org_id)
         
         if not self.check_response_status(is_success, reports, org_id, 'reports'):
             return
