@@ -87,19 +87,19 @@ class WebSborClient(BaseClient):
 
         for org in orgs:
             org_id = org.get('id')
-            reports = self.get_org_reports(org_id)
+            reports = self.get_reports(org_id)
             reports = reports if reports else []
             org.update(reports=reports)
         return orgs
 
-    def get_organisation_reports(self, org_id):
+    def get_reports(self, org_id):
         """
         Метод реализует получение отчетов для организации по пераданному ID организации
         """
         if org_id is None:
             return
 
-        is_success, reports = self.client.get_org_reports(org_id)
+        is_success, reports = self.client.get_organisation_reports(org_id)
         
         if not self.check_response_status(is_success, reports, org_id, 'reports'):
             return
