@@ -118,4 +118,4 @@ class WebSborClient(BaseClient):
             organisations = self.get_organisations_by_inn(inn)
             if organisations:
                 total_orgainisations.extend(organisations)
-        return organisations    
+        return total_orgainisations    
