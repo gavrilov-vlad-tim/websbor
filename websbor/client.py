@@ -23,6 +23,7 @@ class BaseClient:
 
     def send_request(self, method_name, url, **kwargs):
         method = getattr(self.session, method_name)
+        response = None
         try:
             sleep(self.delay)
             response = method(url, timeout=self.timeout, **kwargs)
