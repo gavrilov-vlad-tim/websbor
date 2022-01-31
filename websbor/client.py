@@ -69,7 +69,7 @@ class WebSborClient(BaseClient):
         """
         if not status:
             message = self.routes_error_messages.get(route_name, 
-                                                     self.default_message)
+                                                     self.default_error_message)
             print(message.format(object_id))
             print(f'Ответ сервера: {response}')
         return status
