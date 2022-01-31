@@ -24,13 +24,17 @@ class BaseClient:
     def send_request(self, method_name, url, **kwargs):
         method = getattr(self.session, method_name)
         response = None
+        
         try:
             sleep(self.delay)
-            response = method(url, timeout=self.timeout, **kwargs)
+            response = method(url, **kwargs)
         except ConnectionError:
             print('Ошибка подключения')
         except Timeout:
             print('Превышено время ожидания ответа')
+        except Exception as error:
+            print(error)
+
         return self.parse_response(response)
     
     def parse_response(self, response):
