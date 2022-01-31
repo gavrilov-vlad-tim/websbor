@@ -1,7 +1,7 @@
 from requests import Session
 from requests import codes
 from requests.exceptions import ConnectionError, Timeout
-
+from time import sleep
 
 class BaseClient:
     """
@@ -13,15 +13,18 @@ class BaseClient:
     orgs_url = f'{base_url}/organizations'
     reports_url = f'{base_url}//organizations/{{}}/forms'
     timeout = 2
+    delay = 1
 
-    def __init__(self, session=None, base_url=None):
+    def __init__(self, session=None, base_url=None, delay=None):
         self.base_url = base_url if base_url else self.base_url
         self.session = session if session else Session()
+        self.delay = delay if delay else self.delay
 
     def send_request(self, method_name, url, **kwargs):
         method = getattr(self.session, method_name)
         response = None
         try:
+            sleep(self.delay)
             response = method(url, timeout=self.timeout, **kwargs)
         except ConnectionError:
             print('Ошибка подключения')
