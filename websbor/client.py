@@ -15,14 +15,14 @@ class BaseClient:
     timeout = 2
     delay = 1
 
-    def __init__(self, session=None, base_url=None, delay=None):
+    def __init__(self, session=None, base_url=None, delay=None, timeout=None):
         self.base_url = base_url if base_url else self.base_url
         self.session = session if session else Session()
         self.delay = delay if delay else self.delay
+        self.timeout = timeout if timeout else self.timeout
 
     def send_request(self, method_name, url, **kwargs):
         method = getattr(self.session, method_name)
-        response = None
         try:
             sleep(self.delay)
             response = method(url, timeout=self.timeout, **kwargs)
