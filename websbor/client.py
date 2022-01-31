@@ -13,11 +13,13 @@ class BaseClient:
     orgs_url = f'{base_url}/organizations'
     reports_url = f'{base_url}//organizations/{{}}/forms'
 
-    def __init__(self, session=None, base_url=None, delay=None, timeout=None):
+    def __init__(self, session=None, base_url=None, delay=None, timeout=None,
+                 progress_bar=None):
         self.base_url = base_url if base_url else self.base_url
         self.session = session if session else Session()
         self.delay = delay if delay else None
         self.timeout = timeout if timeout else None
+        self.progress_bar = progress_bar if progress_bar else None
 
     def send_request(self, method_name, url, **kwargs):
         method = getattr(self.session, method_name)
@@ -122,6 +124,9 @@ class WebSborClient(BaseClient):
 
         if inns is None:
            return total_orgainisations
+
+        if self.progress_bar:
+            inns = self.progress_bar(inns)
 
         for inn in inns:
             organisations = self.get_organisations_by_inn(inn)
