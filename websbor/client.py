@@ -26,13 +26,16 @@ class BaseClient:
         response = None
 
         try:
-            if self.delay and self.delay > 0:
-                sleep(self.delay)
             if self.timeout and self.timeout > 0:
                 kwargs.update(timeout=self.timeout)
+
             response = method(url, **kwargs)
-        except ConnectionError:
-            print('Ошибка подключения')
+
+            if self.delay and self.delay > 0:
+                sleep(self.delay)
+                
+        except ConnectionError as error:
+            print(f'Ошибка подключения: {error}')
         except Timeout:
             print('Превышено время ожидания ответа')
         except Exception as error:
